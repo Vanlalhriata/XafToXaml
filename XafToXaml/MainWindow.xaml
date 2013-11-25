@@ -1,0 +1,54 @@
+﻿<Window x:Class="XafToXaml.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:XafToXaml"
+        Title="XAF to XAML converter" WindowState="Maximized">
+
+    <Window.DataContext>
+        <local:MainViewModel />
+    </Window.DataContext>
+
+    <Grid Margin="20">
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60" />
+            <RowDefinition Height="60" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" >
+            <TextBlock Text="File: " Margin="10" VerticalAlignment="Center" />
+            <TextBox x:Name="filePathTextBox" Text="{Binding FilePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5" Margin="10" MinWidth="300" VerticalAlignment="Center" />
+            <Button x:Name="browse" Padding="5" Margin="15" Content="Browse" Command="{Binding BrowseCommand}"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Row="1">
+            <Button Content="Load" IsDefault="True" Width="100" Margin="10" Command="{Binding LoadCommand}" />
+			<TextBox IsReadOnly="True" Margin="10" FontFamily="Consolas"
+					 Text="&lt;Storyboard xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;&gt;&#x0a;&lt;/Storyboard&gt;" />
+        </StackPanel>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Column="0" Text="Position:" HorizontalAlignment="Left" Margin="10,0"/>
+            <TextBlock Grid.Column="1" Text="LookDirection:" HorizontalAlignment="Left" Margin="10,0" />
+            
+            <ScrollViewer Grid.Row="1" Grid.Column="0" Margin="10">
+                <TextBox x:Name="positionTextBlock" Text="{Binding PositionText}" FontFamily="Consolas" AcceptsReturn="True" />
+            </ScrollViewer>
+            <ScrollViewer Grid.Row="1" Grid.Column="1" Margin="10">
+                <TextBox x:Name="lookTextBlock" Text="{Binding LookDirectionText}" FontFamily="Consolas" AcceptsReturn="True" />
+            </ScrollViewer>
+
+        </Grid>
+        
+    </Grid>
+</Window>
