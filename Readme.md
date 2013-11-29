@@ -8,5 +8,10 @@ Licensed under the Microsoft Public license.
 
 ---
 
-####What are .xaf files?  
-As far as this application is concerned, .xaf files are 3ds Max animations exported to XML format
+####Questions you may have:
+
+__What are .xaf files?__  
+As far as this application is concerned, .xaf files are 3ds Max animations exported to XML format.
+
+__I want the application and not the code. Help!__  
+The `Application.zip` file is what you want.
