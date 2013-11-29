@@ -103,6 +103,29 @@ namespace XafToXaml
 
         #endregion
 
+        #region IsTruncateBlankKeyFrames
+
+        private bool _IsTruncateBlankKeyFrames = true;
+
+        /// <summary>
+        /// Gets or sets the IsTruncateBlankKeyFrames property. This observable property 
+        /// indicates if key frame time will be adjusted for zero change key frames.
+        /// </summary>
+        public bool IsTruncateBlankKeyFrames
+        {
+            get { return _IsTruncateBlankKeyFrames; }
+            set
+            {
+                if (_IsTruncateBlankKeyFrames != value)
+                {
+                    _IsTruncateBlankKeyFrames = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        #endregion
+
         #endregion Properties
 
         #region Commands
@@ -186,6 +209,13 @@ namespace XafToXaml
             lastPosition = new Point3D();
             lastLook = new Vector3D();
 
+            bool isFirstLoop = true;
+            bool isPositionChanged = false;
+            bool isLookDirectionChanged = false;
+            bool isTruncatedTimeFixed = false;
+
+            TimeSpan truncatedTime = TimeSpan.Zero;
+
             foreach (XElement s in samples.Descendants())
             {
                 TimeSpan time = GetTimeSpan(s);
@@ -193,20 +223,48 @@ namespace XafToXaml
                 double[] v = s.Attribute("v").Value.Split(' ').Select(x => Double.Parse(x)).ToArray();
                 Matrix3D vMatrix = GetMatrixFrom(v);
 
+                // Get new Position and LookDirection
                 Point3D position = GetPosition(vMatrix);
-                if (position != lastPosition)
-                    PositionText += GetXaml(typeof(EasingPoint3DKeyFrame).Name, time, position.ToString());
-                else
-                    PositionText += "\n";
-
                 Vector3D lookDirection = GetLook(vMatrix);
-                if (lookDirection != lastLook)
+
+                if (isFirstLoop)
+                {
+                    // Always append starting values
+                    PositionText += GetXaml(typeof(EasingPoint3DKeyFrame).Name, time, position.ToString());
                     LookDirectionText += GetXaml(typeof(EasingVector3DKeyFrame).Name, time, lookDirection.ToString());
+                }
                 else
-                    LookDirectionText += "\n";
+                {
+                    isPositionChanged = position != lastPosition;
+                    isLookDirectionChanged = lookDirection != lastLook;
+
+                    // Truncate time if the option is set
+                    if (IsTruncateBlankKeyFrames)
+                    {
+                        // Fix truncatedTime if changes occur in this loop. Else save time to be truncated
+                        if (!isTruncatedTimeFixed)
+                        {
+                            if (isPositionChanged || isLookDirectionChanged)
+                                isTruncatedTimeFixed = true;
+                            else
+                                truncatedTime = time;
+                        }
+
+                        // isTruncatedTimeFixed is set if any change
+                        if (isTruncatedTimeFixed)
+                            time -= truncatedTime;
+                    }
+
+                    if (isPositionChanged)
+                        PositionText += GetXaml(typeof(EasingPoint3DKeyFrame).Name, time, position.ToString());
+                    if (isLookDirectionChanged)
+                        LookDirectionText += GetXaml(typeof(EasingVector3DKeyFrame).Name, time, lookDirection.ToString());
+                }
 
                 lastPosition = position;
                 lastLook = lookDirection;
+
+                isFirstLoop = false;
             }
 
             PositionText += "</Point3DAnimationUsingKeyFrames>";

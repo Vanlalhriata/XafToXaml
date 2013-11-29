@@ -12,6 +12,7 @@
         
         <Grid.RowDefinitions>
             <RowDefinition Height="60" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="60" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
@@ -22,13 +23,20 @@
             <Button x:Name="browse" Padding="5" Margin="15" Content="Browse" Command="{Binding BrowseCommand}"/>
         </StackPanel>
 
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Row="1">
+        <StackPanel Grid.Row="1">
+            <!--<CheckBox Content="Append blank lines for key frames with no change" IsChecked="{Binding IsAppendBlankKeyFrame}" Margin="10,5" />-->
+            <CheckBox Content="Truncate time for leading key frames with no change" IsChecked="{Binding IsTruncateBlankKeyFrames}" Margin="10,5" />
+        </StackPanel>
+        
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Row="2">
             <Button Content="Load" IsDefault="True" Width="100" Margin="10" Command="{Binding LoadCommand}" />
 			<TextBox IsReadOnly="True" Margin="10" FontFamily="Consolas"
 					 Text="&lt;Storyboard xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;&gt;&#x0a;&lt;/Storyboard&gt;" />
         </StackPanel>
+        
+        
 
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
